@@ -1,0 +1,53 @@
+{
+  "reporting": [
+    {
+      "id": "1",
+      "author": {
+        "first_name": "Ossama",
+        "last_name": "Ashraf",
+        "email": "ossama1998@windowslive.com",
+        "birth_date": "1998-05-19",
+        "sex": "Homme"
+      },
+      "observations": [
+        {
+          "id": 1,
+          "name": "Observation 1"
+        }
+      ],
+      "description": "Dev cool"
+    },
+    {
+      "id": "2",
+      "author": {
+        "first_name": "Matawan",
+        "last_name": "Services",
+        "email": "toto@matawanservices.com",
+        "birth_date": "1985-06-12",
+        "sex": "Femme"
+      },
+      "observations": [
+        {
+          "id": 2,
+          "name": "Panne d'électricité"
+        }
+      ],
+      "description": "Coupure de service ponctuelle"
+    }
+  ],
+  "observations": [
+    {
+      "id": "1",
+      "name": "Fuite d'eau"
+    },
+    {
+      "id": "2",
+      "name": "Panne d'électricité"
+    },
+    {
+      "id": "3",
+      "name": "Nuisance sonore"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

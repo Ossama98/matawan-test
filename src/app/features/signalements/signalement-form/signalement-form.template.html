@@ -1,0 +1,137 @@
+<div class="form-container">
+  <h1>{{ signalementId ? 'Modifier le signalement' : 'Nouveau signalement' }}</h1>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <fieldset formGroupName="author" class="author-group">
+        <legend>Auteur</legend>
+
+        <mat-form-field>
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="first_name" maxlength="50" />
+          @if (form.get('author.first_name')?.hasError('required')) {
+            <mat-error>Le prénom est obligatoire</mat-error>
+          }
+          @if (form.get('author.first_name')?.hasError('maxlength')) {
+            <mat-error>50 caractères maximum</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="last_name" maxlength="50" />
+          @if (form.get('author.last_name')?.hasError('required')) {
+            <mat-error>Le nom est obligatoire</mat-error>
+          }
+          @if (form.get('author.last_name')?.hasError('maxlength')) {
+            <mat-error>50 caractères maximum</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Date de naissance</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="birth_date" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          @if (form.get('author.birth_date')?.hasError('required')) {
+            <mat-error>La date de naissance est obligatoire</mat-error>
+          }
+          @if (form.get('author.birth_date')?.hasError('maxAge')) {
+            <mat-error>La date de naissance ne peut pas dépasser 100 ans</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Sexe</mat-label>
+          <mat-select formControlName="sex">
+            <mat-option value="Homme">Homme</mat-option>
+            <mat-option value="Femme">Femme</mat-option>
+            <mat-option value="Non-binaire">Non-binaire</mat-option>
+          </mat-select>
+          @if (form.get('author.sex')?.hasError('required')) {
+            <mat-error>Le sexe est obligatoire</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" />
+          @if (form.get('author.email')?.hasError('required')) {
+            <mat-error>L'email est obligatoire</mat-error>
+          }
+          @if (form.get('author.email')?.hasError('email')) {
+            <mat-error>Format d'email invalide</mat-error>
+          }
+          @if (form.get('author.email')?.hasError('emailTaken')) {
+            <mat-error>Cet email est déjà utilisé</mat-error>
+          }
+          @if (form.get('author.email')?.pending) {
+            <mat-hint>Vérification en cours...</mat-hint>
+          }
+        </mat-form-field>
+      </fieldset>
+
+      <mat-form-field class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="4"></textarea>
+        @if (form.get('description')?.hasError('required')) {
+          <mat-error>La description est obligatoire</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Observations</mat-label>
+        <mat-chip-grid #chipGrid>
+          @for (obsId of selectedObservationIds; track obsId) {
+            <mat-chip-row (removed)="removeObservation(obsId)">
+              {{ getObservationName(obsId) }}
+              <button matChipRemove aria-label="Retirer cette observation">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip-row>
+          }
+          <input
+            [matChipInputFor]="chipGrid"
+            [matAutocomplete]="auto"
+            placeholder="Ajouter une observation..."
+          />
+        </mat-chip-grid>
+        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addObservation($event)">
+          @for (obs of filteredObservations; track obs.id) {
+            <mat-option [value]="obs.id">{{ obs.name }}</mat-option>
+          }
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <pre style="background:#eee;padding:8px;font-size:12px;">
+STATUS: {{ form.status }}
+        first_name: {{ form.get('author.first_name')?.status }} {{ form.get('author.first_name')?.errors | json }}
+        last_name: {{ form.get('author.last_name')?.status }} {{ form.get('author.last_name')?.errors | json }}
+        birth_date: {{ form.get('author.birth_date')?.status }} {{ form.get('author.birth_date')?.errors | json }} value={{ form.get('author.birth_date')?.value }}
+        sex: {{ form.get('author.sex')?.status }} {{ form.get('author.sex')?.errors | json }} value={{ form.get('author.sex')?.value }}
+        email: {{ form.get('author.email')?.status }} {{ form.get('author.email')?.errors | json }} pending={{ form.get('author.email')?.pending }}
+        description: {{ form.get('description')?.status }} {{ form.get('description')?.errors | json }}
+</pre>
+
+      <div class="form-actions">
+        <button mat-button type="button" routerLink="/signalements">Annuler</button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="form.invalid || form.pending || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <mat-spinner diameter="20"></mat-spinner>
+          } @else {
+            {{ signalementId ? 'Modifier' : 'Créer' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>
